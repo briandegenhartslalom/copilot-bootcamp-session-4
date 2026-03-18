@@ -81,6 +81,103 @@ section h3 {
   font-size: 1.4rem;
 }
 
+/* Search & Filter Toolbar */
+#search-filter-toolbar {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f0f4ff, #e3eeff);
+  border: 1px solid #c5d5f5;
+  border-radius: 10px;
+}
+
+.search-row {
+  margin-bottom: 12px;
+}
+
+.search-row input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #b0c4de;
+  border-radius: 6px;
+  font-size: 15px;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.search-row input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 160px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #003d7a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-group select {
+  padding: 8px 10px;
+  border: 1px solid #b0c4de;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+.clear-btn {
+  padding: 8px 16px;
+  background: white;
+  color: #003d7a;
+  border: 1px solid #003d7a;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-end;
+}
+
+.clear-btn:hover {
+  background: #003d7a;
+  color: white;
+}
+
+.results-count {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #555;
+  font-style: italic;
+}
+
+/* Make capabilities section wider to accommodate the toolbar */
+#capabilities-container {
+  max-width: 900px;
+}
+
 .capability-card {
   margin-bottom: 20px;
   padding: 20px;

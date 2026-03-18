@@ -20,6 +20,54 @@
     <main>
       <section id="capabilities-container">
         <h3>Available Capabilities</h3>
+
+        <div id="search-filter-toolbar">
+          <div class="search-row">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search by name, description, certification, or consultant..."
+              aria-label="Search capabilities"
+            />
+          </div>
+          <div class="filter-row">
+            <div class="filter-group">
+              <label for="filter-practice-area">Practice Area</label>
+              <select id="filter-practice-area">
+                <option value="">All Areas</option>
+                <option value="Technology">Technology</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Operations">Operations</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-vertical">Industry Vertical</label>
+              <select id="filter-vertical">
+                <option value="">All Verticals</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Financial Services">Financial Services</option>
+                <option value="Retail">Retail</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Government">Government</option>
+                <option value="Technology">Technology</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="sort-by">Sort By</label>
+              <select id="sort-by">
+                <option value="name">Name (A–Z)</option>
+                <option value="name-desc">Name (Z–A)</option>
+                <option value="capacity">Capacity (High–Low)</option>
+                <option value="capacity-asc">Capacity (Low–High)</option>
+                <option value="consultants">Team Size (Large–Small)</option>
+                <option value="practice_area">Practice Area</option>
+              </select>
+            </div>
+            <button id="clear-filters" class="clear-btn">Clear Filters</button>
+          </div>
+          <div id="results-count" class="results-count"></div>
+        </div>
+
         <div id="capabilities-list">
           <!-- Capabilities will be loaded here -->
           <p>Loading capabilities...</p>
