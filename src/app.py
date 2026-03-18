@@ -111,8 +111,60 @@ def root():
 
 
 @app.get("/capabilities")
-def get_capabilities():
-    return capabilities
+def get_capabilities(
+    q: str = None,
+    practice_area: str = None,
+    industry_vertical: str = None,
+    sort_by: str = "name",
+    sort_order: str = "asc"
+):
+    """List capabilities with optional search and filtering.
+
+    - **q**: Free text search across name, description, certifications, and consultant emails
+    - **practice_area**: Filter by practice area (Technology, Strategy, Operations)
+    - **industry_vertical**: Filter by industry vertical
+    - **sort_by**: Sort field — name | capacity | consultants | practice_area
+    - **sort_order**: asc | desc
+    """
+    results = dict(capabilities)
+
+    # Free text search
+    if q:
+        q_lower = q.lower()
+        results = {
+            name: details for name, details in results.items()
+            if q_lower in name.lower()
+            or q_lower in details["description"].lower()
+            or any(q_lower in cert.lower() for cert in details.get("certifications", []))
+            or any(q_lower in email.lower() for email in details.get("consultants", []))
+        }
+
+    # Practice area filter
+    if practice_area:
+        results = {
+            name: details for name, details in results.items()
+            if details["practice_area"].lower() == practice_area.lower()
+        }
+
+    # Industry vertical filter
+    if industry_vertical:
+        results = {
+            name: details for name, details in results.items()
+            if any(industry_vertical.lower() == v.lower() for v in details.get("industry_verticals", []))
+        }
+
+    # Sorting
+    reverse = sort_order.lower() == "desc"
+    if sort_by == "capacity":
+        sorted_items = sorted(results.items(), key=lambda x: x[1].get("capacity", 0), reverse=reverse)
+    elif sort_by == "consultants":
+        sorted_items = sorted(results.items(), key=lambda x: len(x[1].get("consultants", [])), reverse=reverse)
+    elif sort_by == "practice_area":
+        sorted_items = sorted(results.items(), key=lambda x: x[1].get("practice_area", ""), reverse=reverse)
+    else:  # default: name
+        sorted_items = sorted(results.items(), key=lambda x: x[0].lower(), reverse=reverse)
+
+    return dict(sorted_items)
 
 
 @app.post("/capabilities/{capability_name}/register")

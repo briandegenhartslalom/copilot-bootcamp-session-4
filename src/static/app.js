@@ -3,15 +3,60 @@ document.addEventListener("DOMContentLoaded", () => {
   const capabilitySelect = document.getElementById("capability");
   const registerForm = document.getElementById("register-form");
   const messageDiv = document.getElementById("message");
+  const searchInput = document.getElementById("search-input");
+  const filterPracticeArea = document.getElementById("filter-practice-area");
+  const filterVertical = document.getElementById("filter-vertical");
+  const sortBy = document.getElementById("sort-by");
+  const clearFiltersBtn = document.getElementById("clear-filters");
+  const resultsCount = document.getElementById("results-count");
+
+  // Debounce helper to avoid firing on every keystroke
+  function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  // Build query string from current filter state
+  function buildQueryParams() {
+    const params = new URLSearchParams();
+    const q = searchInput.value.trim();
+    const area = filterPracticeArea.value;
+    const vertical = filterVertical.value;
+    const sort = sortBy.value;
+
+    if (q) params.set("q", q);
+    if (area) params.set("practice_area", area);
+    if (vertical) params.set("industry_vertical", vertical);
+
+    // Parse combined sort value (e.g. "capacity" = high-low desc, "capacity-asc" = asc)
+    if (sort === "name") { params.set("sort_by", "name"); params.set("sort_order", "asc"); }
+    else if (sort === "name-desc") { params.set("sort_by", "name"); params.set("sort_order", "desc"); }
+    else if (sort === "capacity") { params.set("sort_by", "capacity"); params.set("sort_order", "desc"); }
+    else if (sort === "capacity-asc") { params.set("sort_by", "capacity"); params.set("sort_order", "asc"); }
+    else if (sort === "consultants") { params.set("sort_by", "consultants"); params.set("sort_order", "desc"); }
+    else if (sort === "practice_area") { params.set("sort_by", "practice_area"); params.set("sort_order", "asc"); }
+
+    return params.toString();
+  }
 
   // Function to fetch capabilities from API
   async function fetchCapabilities() {
+    const query = buildQueryParams();
     try {
-      const response = await fetch("/capabilities");
+      const response = await fetch(`/capabilities${query ? "?" + query : ""}`);
       const capabilities = await response.json();
 
       // Clear loading message
       capabilitiesList.innerHTML = "";
+
+      // Update results count
+      const count = Object.keys(capabilities).length;
+      resultsCount.textContent = count === 0
+        ? "No capabilities match your filters."
+        : `Showing ${count} capability${count !== 1 ? "s" : ""}`;
 
       // Populate capabilities list
       Object.entries(capabilities).forEach(([name, details]) => {
@@ -68,6 +113,21 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching capabilities:", error);
     }
   }
+
+  // Wire up filter controls
+  const debouncedFetch = debounce(fetchCapabilities, 300);
+  searchInput.addEventListener("input", debouncedFetch);
+  filterPracticeArea.addEventListener("change", fetchCapabilities);
+  filterVertical.addEventListener("change", fetchCapabilities);
+  sortBy.addEventListener("change", fetchCapabilities);
+
+  clearFiltersBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    filterPracticeArea.value = "";
+    filterVertical.value = "";
+    sortBy.value = "name";
+    fetchCapabilities();
+  });
 
   // Handle unregister functionality
   async function handleUnregister(event) {
